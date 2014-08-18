@@ -1,5 +1,14 @@
 #!/usr/bin/env node
 
+/*
+*  Author: Alex Nudelman
+*  Version: 1.0
+*  Git: https://github.com/nudelx
+*  2014
+*/
+
+
+
 (function(){
 
 
@@ -96,19 +105,11 @@
 							
 							var self = this;
 
-
-							// console.dir(this.args);
 							var fileNameToSave = this.args['-o'] || this.args['-f']+'.compiled.js';
-
-
-							// console.dir(fileNameToSave);
 
 							this.GOOGLE.REQUEST.js_code = this.fileIn;
 							
 							var postData = this.QS.stringify(this.GOOGLE.REQUEST);
-
-
-							// console.dir(postData);
 
 							var postOptions = {
 								
@@ -124,9 +125,6 @@
 							};
 
 
-
-							// console.dir(postOptions);
-
 							var RH = this.HTTP.request(postOptions,function(response) {
 
 								response.setEncoding('utf8');
@@ -135,8 +133,6 @@
   								response.on('data', function (res) {
 
   									 fullRes += res;
-
-    								
 
   								});
 
@@ -155,8 +151,6 @@
 							RH.write(postData);
 							RH.end();
 
-
-							// console.dir(this.RESP);
 
 
 					},
@@ -189,6 +183,8 @@
 						    white:  "\033[38m"
 
 						};
+
+						
 
 						var strOut = 'successfully Done';
 						var finalColor = colors.green;		
@@ -278,6 +274,5 @@
 	compiler.init();
 	
 
-	
 
 })();
