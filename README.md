@@ -16,7 +16,6 @@
 I am working in web oriented environment and every day I have to check my JavaScript code for compatibility and care about the white spaces and more. After couple of times I being using the Google Closure Compiler web interface, dealing with this copy/paste issue. I have decided to create a plugin with command line interface. The Plugin can use Google Rest-Api and do the work for me by sending my JavaScript files to the Google compiler and create the compiled/optimized file in my server with short feedback from the service.  
 
 <br>
-<br>
 
 ###What is the Closure Compiler?
 
