@@ -1,63 +1,43 @@
 #!/usr/bin/env node
-
 /*
 *  Author: Alex Nudelman
 *  Version: 1.0
 *  Git: https://github.com/nudelx
 *  2014
 */
-
-
-
 (function(){
-
-
 	var compiler = {
-
-
 					init :function(){
-
-
-
 						//basic settings 
 						this.args = {};
 						this.arrayArgs = process.argv.slice(2);
 						
-
 						//requirements
 						this.FS   = require('fs');
 						this.QS   = require('querystring');
 						this.HTTP = require('http');
-
 						//google compiler settings
 						this.GOOGLE = {
-
 							URL:    'closure-compiler.appspot.com',
 							METHOD: 'POST',
 							PATH : '/compile',
 							REQUEST: {
-
 								'js_code' : null,
 								'compilation_level' : 'SIMPLE_OPTIMIZATIONS',
 								'output_format': 'json',
 								'output_info':['compiled_code','statistics', 'warnings' , 'errors'],
 								'warning_level':'default',
 								'output_file_name': 'default-min.js'
-
 							}
 						},
-
-
 						// build args array and run chain process 
 						this.args = this.buildArgsObject(this.arrayArgs);
-
 					},
 					
 					buildArgsObject: function(arrayArgs ){
 						
 						var self = this;
 						var obj = {};
-
 					    arrayArgs.forEach(function(value, index){
 	
 							if(index%2){self.args[arrayArgs[index-1]] = value;}
@@ -65,20 +45,13 @@
 						});
                        	
                        	
-                       	this.readJsFile();
+                                               	this.readJsFile();
 					    
 					},
-
 					readJsFile:function(){
-
 						var self = this;
-
 						// console.dir(this.args);	
-
-
 						if(this.args['-f']){
-
-
 							try { 
 								this.fileIn = this.FS.readFileSync(this.args['-f'], "utf8"); 
 							}
@@ -91,26 +64,16 @@
 								
 						}else{
 							this.help();
-
 						}
-
 						this.sendFile();
-
 					},
-
-
-
-
 					sendFile:function(){
 							
 							var self = this;
-
 							var fileNameToSave = this.args['-o'] || this.args['-f']+'.compiled.js';
-
 							this.GOOGLE.REQUEST.js_code = this.fileIn;
 							
 							var postData = this.QS.stringify(this.GOOGLE.REQUEST);
-
 							var postOptions = {
 								
 								host: this.GOOGLE.URL,
@@ -121,77 +84,49 @@
           									'Content-Type': 'application/x-www-form-urlencoded',
           									'Content-Length': postData.length
       									}
-
 							};
-
-
 							var RH = this.HTTP.request(postOptions,function(response) {
-
 								response.setEncoding('utf8');
 								var fullRes = "";
   					
   								response.on('data', function (res) {
-
   									 fullRes += res;
-
   								});
-
   								response.on('end', function (data) {
-
-  	    							self.writeToFile.call(self,fullRes,fileNameToSave);
+  	    	        						self.writeToFile.call(self,fullRes,fileNameToSave);
   								});
-
   								response.on('error',function (error){
   									
   									console.log("Error");
   									console.dir(error);
-
   								})
-					});
+			                		});
 							RH.write(postData);
 							RH.end();
-
-
-
 					},
-
 					writeToFile: function(data,fn){
-
 						
 						var resObj = JSON.parse(data) ;
 				
 						this.FS.writeFile('./'+fn, resObj.compiledCode,function(e){
-
 						 	if(e){console.log("Error writing to file ...");}
-
 						 });
-
 						compiler.consoleOutput(resObj,fn);
-
 						
 					},
-
 					consoleOutput:function (resObj,fn){
-
-
-
 						var colors = {
-
 							yellow: "\033[33m",
 							red:    "\033[31m",
 						    green:  "\033[32m",
 						    white:  "\033[38m"
-
 						};
-
 						
-
 						var strOut = 'successfully Done';
 						var finalColor = colors.green;		
 						
 						if(resObj.warnings){ finalColor = colors.yellow ;}
 						else if(resObj.errors){strOut="Failed";  finalColor = colors.red ;}
-
 						console.log(" ");
 						console.log(finalColor);
 						console.log('\t\t Compilation '+strOut+" !!!") ;
@@ -206,30 +141,20 @@
 						// console.log("------------------------------------");
 						console.dir(resObj.statistics);
 						console.log(" ");
-
 						
 						
 						['warnings','errors'].forEach(function (e) {
-
 							if(resObj[e]){
-
 								console.log(e +": "+ resObj[e].length);
 								console.log("------------------------------------");
 								console.dir(resObj[e])
-
 							}
-
 						});
-
 						console.log(colors.white);
 						
 					},
-
-
 					help: function (){
-
 						console.log('\033[2J');
-
 						console.log(" ");
 						console.log(" ");
 						console.log("Welcome to Simple JavaScript Compiler ");	
@@ -253,11 +178,9 @@
 						
 						console.log(" ");
 						console.log(" ");
-
 						console.log("Usage: ");
 						console.log(" ");
 						console.log("./closure_compiler -f my-javascrit-file.js  -o my.min.compied.file.js");
-
 						console.log(" ");
 						console.log("-f | file name to compile ");
 						console.log("-o | output file name ( optional ) ");
@@ -265,14 +188,8 @@
 						
 						process.exit(1);
 					}
-
 			
-
 			};
-
-
 	compiler.init();
 	
-
-
 })();
